@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>かもしかカッシーの社会アプリ</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#2F5C8A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="カッシー社会">
+</head>
+<body>
+<div id="app">
+
+  <header class="app-header">
+    <img src="icons/icon-192.png" alt="かもしかのカッシー" class="mascot-avatar">
+    <p class="logo">かもしかカッシー<span class="mark">の社会アプリ</span></p>
+  </header>
+
+  <main id="screen-home" class="screen is-active">
+    <section class="home-summary">
+      <div class="summary-tile due">
+        <p class="tile-num" id="dueCount">0</p>
+        <p class="tile-label">今日の復習</p>
+      </div>
+      <div class="summary-tile new">
+        <p class="tile-num" id="newCount">0</p>
+        <p class="tile-label">新規</p>
+      </div>
+    </section>
+
+    <p class="streak-text" id="streakText"></p>
+
+    <div class="countdown-box" id="countdownBox" hidden>
+      <p class="countdown-text" id="countdownText"></p>
+      <button id="cramBtn" class="btn-cram" type="button" hidden>直前対策：総復習テスト</button>
+    </div>
+
+    <button id="startBtn" class="btn-primary" type="button">学習をはじめる</button>
+    <p class="empty-msg" id="emptyMsg" hidden>今日の学習分はありません。お疲れさまでした！</p>
+    <p class="loading-msg" id="loadingMsg">読み込み中…</p>
+
+    <div class="home-nav" id="homeNav" hidden>
+      <button id="testModeBtn" class="btn-secondary" type="button">テストモード</button>
+      <button id="statsBtn" class="btn-secondary" type="button">統計を見る</button>
+      <button id="settingsBtn" class="btn-secondary" type="button">設定</button>
+    </div>
+
+    <section class="stats-mini" id="statsMini" hidden>
+      <div class="stat-row"><span>学習コンテンツ</span><span id="totalWordsText"></span></div>
+      <div class="stat-row"><span>習得済み</span><span id="masteredText"></span></div>
+    </section>
+  </main>
+
+  <main id="screen-session" class="screen">
+    <div class="session-topbar">
+      <button id="exitBtn" class="btn-text" type="button">終了</button>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="queue-count" id="queueCount"></span>
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+      <p class="quiz-type-label" id="quizTypeLabel"></p>
+
+      <div class="quiz-prompt" id="quizPrompt"></div>
+      <p class="quiz-prompt-sub" id="quizPromptSub"></p>
+
+      <div class="quiz-choices" id="quizChoices"></div>
+
+      <div class="quiz-input-area" id="quizInputArea" hidden>
+        <input type="text" id="spellingInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" placeholder="答えを入力">
+        <button id="submitSpellingBtn" class="btn-primary" type="button">答える</button>
+      </div>
+
+      <div class="quiz-feedback" id="quizFeedback" hidden>
+        <p class="feedback-result" id="feedbackResult"></p>
+        <p class="feedback-word"><span id="feedbackWord"></span></p>
+        <p class="feedback-example-en" id="feedbackExampleEn"></p>
+        <p class="feedback-example-ja" id="feedbackExampleJa"></p>
+
+        <div class="rate-buttons" id="rateButtons" hidden>
+          <button class="rate-btn again" data-grade="again" type="button">もう一度</button>
+          <button class="rate-btn good" data-grade="good" type="button">普通</button>
+          <button class="rate-btn easy" data-grade="easy" type="button">簡単</button>
+        </div>
+        <button class="btn-primary" id="continueBtn" type="button" hidden>次へ</button>
+      </div>
+    </div>
+  </main>
+
+  <main id="screen-summary" class="screen">
+    <div class="summary-box">
+      <p class="summary-title">お疲れさまでした！</p>
+      <p class="summary-stat" id="summaryStat"></p>
+      <button id="backHomeBtn" class="btn-primary" type="button">ホームに戻る</button>
+    </div>
+  </main>
+
+  <main id="screen-test-setup" class="screen">
+    <div class="setup-box">
+      <p class="summary-title">テストモード</p>
+
+      <div class="setup-group">
+        <p class="setup-label">モード</p>
+        <div class="chip-group" id="testModeButtons">
+          <button type="button" class="chip-btn" data-mode="all">全範囲</button>
+          <button type="button" class="chip-btn" data-mode="history">歴史</button>
+          <button type="button" class="chip-btn" data-mode="geography">地理</button>
+          <button type="button" class="chip-btn" data-mode="civics">公民</button>
+          <button type="button" class="chip-btn" data-mode="weak">苦手単元</button>
+          <button type="button" class="chip-btn" data-mode="custom">自由選択</button>
+        </div>
+      </div>
+
+      <div class="setup-group" id="customOptions" hidden>
+        <p class="setup-label">対象分野</p>
+        <div class="check-row">
+          <label><input type="checkbox" class="subject-check" value="history" checked> 歴史</label>
+          <label><input type="checkbox" class="subject-check" value="geography" checked> 地理</label>
+          <label><input type="checkbox" class="subject-check" value="civics" checked> 公民</label>
+        </div>
+        <p class="setup-label">対象コンテンツ</p>
+        <div class="check-row">
+          <label><input type="checkbox" class="content-check" value="term" checked> 用語</label>
+          <label><input type="checkbox" class="content-check" value="question" checked> 一問一答</label>
+        </div>
+        <p class="setup-label">レベル</p>
+        <div class="chip-group" id="customLevelButtons">
+          <button type="button" class="chip-btn is-active" data-level="all">すべて</button>
+          <button type="button" class="chip-btn" data-level="basic">basic</button>
+          <button type="button" class="chip-btn" data-level="advanced">advanced</button>
+        </div>
+      </div>
+
+      <div class="setup-group">
+        <p class="setup-label">出題数</p>
+        <div class="chip-group" id="countButtons">
+          <button type="button" class="chip-btn" data-count="10">10問</button>
+          <button type="button" class="chip-btn" data-count="20">20問</button>
+          <button type="button" class="chip-btn" data-count="30">30問</button>
+        </div>
+      </div>
+
+      <button id="testStartBtn" class="btn-primary" type="button" disabled>テストを開始</button>
+      <button id="testCancelBtn" class="btn-text" type="button">ホームに戻る</button>
+    </div>
+  </main>
+
+  <main id="screen-test-result" class="screen">
+    <div class="result-box">
+      <p class="summary-title">テスト結果</p>
+      <p class="result-score" id="resultScore"></p>
+      <div class="result-list" id="resultList"></div>
+      <button id="resultHomeBtn" class="btn-primary" type="button">ホームに戻る</button>
+    </div>
+  </main>
+
+  <main id="screen-stats" class="screen">
+    <div class="stats-box">
+      <p class="summary-title">統計</p>
+
+      <section class="stats-section">
+        <h3>コンテンツ別 習得率</h3>
+        <div id="statsByType"></div>
+      </section>
+
+      <section class="stats-section">
+        <h3>分野別 到達度</h3>
+        <div id="statsBySubject"></div>
+      </section>
+
+      <section class="stats-section">
+        <h3>レベル別 到達度</h3>
+        <div id="statsByLevel"></div>
+      </section>
+
+      <section class="stats-section">
+        <h3>一問一答：単元別正答率</h3>
+        <div id="statsQuestionUnits"></div>
+      </section>
+
+      <section class="stats-section">
+        <h3>テスト結果履歴</h3>
+        <div id="testHistoryList"></div>
+      </section>
+
+      <button id="statsHomeBtn" class="btn-primary" type="button">ホームに戻る</button>
+    </div>
+  </main>
+
+  <main id="screen-settings" class="screen">
+    <div class="setup-box">
+      <p class="summary-title">設定</p>
+
+      <div class="setup-group">
+        <p class="setup-label">目標受験日（復習ペースの調整に使用）</p>
+        <label class="field-label" for="examDate">高校受験</label>
+        <input type="date" id="examDate" class="date-input">
+      </div>
+
+      <div class="setup-group">
+        <p class="setup-label">バックアップ</p>
+        <div class="chip-group">
+          <button id="exportBtn" class="btn-secondary" type="button">書き出す</button>
+          <button id="importBtn" class="btn-secondary" type="button">読み込む</button>
+        </div>
+        <input type="file" id="importFile" accept="application/json" hidden>
+        <p class="setup-hint" id="backupMsg"></p>
+      </div>
+
+      <div class="setup-group">
+        <p class="setup-label">データの削除</p>
+        <button id="deleteAllBtn" class="btn-danger" type="button">学習データを全て削除する</button>
+      </div>
+
+      <button id="settingsHomeBtn" class="btn-primary" type="button">ホームに戻る</button>
+    </div>
+  </main>
+
+</div>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/srs.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/test.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/backup.js"></script>
+<script src="js/app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
